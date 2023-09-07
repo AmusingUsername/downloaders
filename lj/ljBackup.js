@@ -5,7 +5,7 @@ function getLjBackup(userName, startYear, startMonth, endYear, endMonth, rss){
   const rssPostUrl = "https://" + userName + ".livejournal.com/data/rss?auth=digest&itemid=###";
   let responseXML = "";
   const postIds = [];
-  let builtRSS = "";
+  let builtOutput = "";
   const templateEntryBasic = { itemid: "", logtime: "", subject: "", event: "", current_mood: "", current_music: ""};
   const templageEntryRSS=  { pubDate: "", title: "", link: "", description: "", comments: "", lj_reply_count: "", lj_music: "", lj_mood: ""};
   
@@ -18,9 +18,14 @@ function getLjBackup(userName, startYear, startMonth, endYear, endMonth, rss){
           for(entry of responseXML.getElementsByTagName("entry")){
               postIds.push(entry.getElementsByTagName("itemid")[0].childNodes[0].nodeValue);               
           }
-        } else {
-          //TODO: check if basic export and save the data to some object
-          //responseXML.getElementsByTagName("entry")[1].appendChild
+        } else { //add entries to basic output
+          if(builtOutput == ""){
+            builtOutput = responseXML;
+          } else {
+            for(entry of responseXML.getElementsByTagName("entry")){
+              builtOutput.getElementsByTagName("livejournal")[0].appendChild(entry);
+            }
+          }
         }
 
         if(currentYear == endYear && currentMonth == endMonth){
@@ -35,6 +40,7 @@ function getLjBackup(userName, startYear, startMonth, endYear, endMonth, rss){
         //TODO: use the postIds array to get the RSS individual entries and make a longer RSS feed of all entries
       }
     }
+  return builtOutput;
   }
 }
 
