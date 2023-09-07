@@ -38,7 +38,7 @@ LiveJournal is an old blogging site that decreased in popularity outside of Russ
 For nostalgia!
 
 ### Usage/Instructions
-1. Open a page on www.livejournal.com (not your <username>.livejournal.com host).
+1. Open a page on www.livejournal.com (not your [username].livejournal.com host).
 2. Log in.
 3. Open developer tools (CTRL-SHIFT-I or F12).
 4. Paste the script from lj/ljBackup.js into the console tab of developer tools.
