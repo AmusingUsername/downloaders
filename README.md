@@ -8,7 +8,7 @@ company's site: https://semoscloud.com/product/jobpts/
 
 Working/tested in early September 2023.
 
-### Purpose of scraper
+### Purpose of downloader
 It may be desirable to have an extract of the recognitions given/received for use in performance reviews or when leaving a company. 
 
 ### Usage/Instructions
@@ -28,4 +28,21 @@ Script can be modified to set a variable on the last line, but Chrome/Edge will 
 ### Room for improvement
 - Asynchronous processing for faster retrieval
 - ~~Just use the domain of the current page~~
-- ~~Some indicator of progress~~ 
+- ~~Some indicator of progress~~
+
+## LiveJournal
+### Background
+LiveJournal is an old blogging site that decreased in popularity outside of Russia, and there doesn't appear to be a simple backup method other than a by month export, which doesn't export formatting. I wrote this as a way to export old blogs as an RSS feed.
+
+### Purpose of downloader
+For nostalgia!
+
+### Usage/Instructions
+1. Open a page on www.livejournal.com (not your <username>.livejournal.com host).
+2. Log in.
+3. Open developer tools (CTRL-SHIFT-I or F12).
+4. Paste the script from lj/ljBackup.js into the console tab of developer tools.
+5. Run the script like the following example: ```getLjBackup("brad", 2002, 1, 2009, 12, true);```  This example would get Brad's (site founder) journal entries from 2002-2009 and output as RSS feed. The last variable indicates basic or RSS export (basic omits formatting like carriage returns). 
+
+### Room for improvement
+- Unsure, it's a work in progress.
