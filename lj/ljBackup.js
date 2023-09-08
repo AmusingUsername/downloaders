@@ -2,7 +2,6 @@
 function getLjBackup(userName, startYear, startMonth, endYear, endMonth, rss){ 
   let currentMonth = startMonth;
   let currentYear = startYear;
-  const rssPostUrl = "https://" + userName + ".livejournal.com/data/rss?auth=digest&itemid=###";
   let responseXML = "";
   const postIds = [];
   let builtOutput = "";
@@ -37,39 +36,76 @@ function getLjBackup(userName, startYear, startMonth, endYear, endMonth, rss){
       currentYear++;
 
       if(rss){
-        //TODO: use the postIds array to get the RSS individual entries and make a longer RSS feed of all entries
+        //use the postIds array to get the RSS individual entries and make a longer RSS feed of all entries
+        postIds.forEach( 
+          function(postId){
+            postRss = getRssById(postId, userName);
+            if(builtOutput == ""){
+              builtOutput = postRss;
+            } else {
+              postRss = postRss.getElementsByTagName("item")[0];
+              builtOutput.getElementsByTagName("channel")[0].appendChild(postRss);
+            }
+          }
+        );
       }
     }
-  return builtOutput;
+    const xs = new XMLSerializer();
+    const xmlstring = xs.serializeToString(builtOutput);
+    return xmlstring;
   }
 }
 
 function getNewExportMonth(userName, year, month){
-    const exportUrl = "https://www.livejournal.com/export_do.bml?authas=";
-    let xhr = new XMLHttpRequest();
-    const postData = new FormData();
-    
-    postData.append('what', 'journal');
-    postData.append('format', 'xml');
-    postData.append('header', 'on');
-    postData.append('encid', '2');
-    postData.append('field_itemid', 'on');
-    postData.append('field_eventtime', 'on');
-    postData.append('field_logtime', 'on');
-    postData.append('field_subject', 'on');
-    postData.append('field_event', 'on');
-    postData.append('field_security', 'on');
-    postData.append('field_allowmask', 'on');
-    postData.append('field_currents', 'on');
-    postData.append('year', year);
-    postData.append('month', month.toLocaleString('en-US', {minimumIntegerDigits: 2}));
+  const exportUrl = "https://www.livejournal.com/export_do.bml?authas=";
+  const xhr = new XMLHttpRequest();
+  const postData = new FormData();
+  
+  postData.append('what', 'journal');
+  postData.append('format', 'xml');
+  postData.append('header', 'on');
+  postData.append('encid', '2');
+  postData.append('field_itemid', 'on');
+  postData.append('field_eventtime', 'on');
+  postData.append('field_logtime', 'on');
+  postData.append('field_subject', 'on');
+  postData.append('field_event', 'on');
+  postData.append('field_security', 'on');
+  postData.append('field_allowmask', 'on');
+  postData.append('field_currents', 'on');
+  postData.append('year', year);
+  postData.append('month', month.toLocaleString('en-US', {minimumIntegerDigits: 2}));
+  
+  xhr.open("POST", exportUrl + userName, false);
+  try{
+  xhr.send(postData);
+  } catch(err) {
+    debugger;
+    console.error(err);
+  }
+  
+  if(xhr.status == 200){
+    return xhr.responseXML;
+  } else {
+    console.error("xhr status " + xhr.status + "!!!");				
+  }
+}
 
-    xhr.open("POST", exportUrl + userName, false);
-    xhr.send(postData);
-
-    if(xhr.status == 200){
-        return xhr.responseXML;
-    } else {
-        console.error("xhr status " + xhr.status + "!!!");				
-    }
+function getRssById(postId, userName){
+  //TODO: facing CORS and 401 issue because this endpoint is on a different domain without appropriate headers AND asks for authentication every request... need to check for legacy RSS URLs
+  const rssPostUrl = "https://" + userName + ".livejournal.com/data/rss?auth=digest&itemid=###";
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", rssPostUrl.replace("###", postId), false);
+  try{
+  xhr.send();
+  } catch(err) {
+    debugger;
+    console.error(err);
+  }
+  
+  if(xhr.status == 200){
+    return xhr.responseXML;
+  } else {
+    console.error("xhr status " + xhr.status + "!!!");				
+  }
 }
