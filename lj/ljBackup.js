@@ -92,7 +92,8 @@ function getNewExportMonth(userName, year, month){
 }
 
 function getRssById(postId, userName){
-  //TODO: facing CORS and 401 issue because this endpoint is on a different domain without appropriate headers AND asks for authentication every request... need to check for legacy RSS URLs
+  //TODO: facing CORS and 401 issue because this endpoint is on a different domain without appropriate headers AND asks for digest authentication every request... 
+  //no luck with legacy URLs. https://www.livejournal.com/users/username/data/rss?auth=digest&itemid=### redirects to username.livejournal.com
   const rssPostUrl = "https://" + userName + ".livejournal.com/data/rss?auth=digest&itemid=###";
   const xhr = new XMLHttpRequest();
   xhr.open("GET", rssPostUrl.replace("###", postId), false);
@@ -109,3 +110,7 @@ function getRssById(postId, userName){
     console.error("xhr status " + xhr.status + "!!!");				
   }
 }
+
+//comments urls:
+// https://www.livejournal.com/export_comments.bml?get=comment_meta&startid=0
+// (comments metadata, tying user to comment, but not clear how jitemid links to post) https://www.livejournal.com/export_comments.bml?get=comment_meta&startid=0
