@@ -91,17 +91,21 @@ function getNewExportMonth(userName, year, month){
   }
 }
 
-function getRssById(postId, userName){
-  //TODO: facing CORS and 401 issue because this endpoint is on a different domain without appropriate headers AND asks for digest authentication every request... 
-  //no luck with legacy URLs. https://www.livejournal.com/users/username/data/rss?auth=digest&itemid=### redirects to username.livejournal.com
+function getRssById(postId, userName, password){
+  //TODO: facing CORS issue because this endpoint is on a different domain without appropriate headers... alternate endpoints redirect, and proxying is beyond scope
+  //will need to adjust above function to output array and open this from <username>.livejournal.com
   const rssPostUrl = "https://" + userName + ".livejournal.com/data/rss?auth=digest&itemid=###";
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", rssPostUrl.replace("###", postId), false);
+  if(!password){
+    xhr.open("GET", rssPostUrl.replace("###", postId), false);
+  } else {
+    xhr.open("GET", rssPostUrl.replace("###", postId), false, userName, password);
+  }
   try{
   xhr.send();
   } catch(err) {
     debugger;
-    console.error(err);
+    console.error(err); 
   }
   
   if(xhr.status == 200){
